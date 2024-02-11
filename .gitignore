@@ -1,0 +1,7 @@
+.DS_Store
+*.tif
+*.npy
+*.csv
+__MACOSX
+*.zip
+outputs/*
