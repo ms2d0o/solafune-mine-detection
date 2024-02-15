@@ -1,0 +1,10 @@
+augmentations:
+  - name: RandomHorizontalFlip
+    params:
+      p: 0.5
+  - name: RandomVerticalFlip
+    params:
+      p: 0.5
+  - name: RandomRotate90
+    params:
+      p: 0.5

@@ -1,0 +1,7 @@
+name: tf_efficientnetv2_s
+
+params:
+  # image_size: 224
+  pretrained: True
+  num_classes: ${n_classes}
+  in_chans: ${experiment.in_chans}
