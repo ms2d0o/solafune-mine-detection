@@ -5,3 +5,4 @@
 __MACOSX
 *.zip
 outputs/*
+scripts/__pycache__
