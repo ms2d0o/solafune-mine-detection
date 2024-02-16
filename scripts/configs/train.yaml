@@ -6,7 +6,7 @@ defaults:
   - criterion: ce
   - optimizers: adamw
 
-DEBUG : true
+DEBUG : False
 
 INPUT_ROOT: data
 OUTPUT_ROOT: output
@@ -15,11 +15,11 @@ MODEL_ROOT: model
 SEED: 42
 
 n_splits: 4
-image_size: 224
+# image_size: 224
 n_classes: 2
 
 EPOCHS: 10
-batch_size: 16
+batch_size: 8
 warmup_steps: 0
 
 device: cpu
