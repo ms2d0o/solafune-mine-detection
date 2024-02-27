@@ -11,3 +11,8 @@ poetry install
 ```
 poetry run python scripts/run.py
 ```
+
+DEBUGをオフにする
+```
+poetry run python scripts/run.py DEBUG=False
+```
