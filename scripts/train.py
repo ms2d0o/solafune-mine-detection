@@ -1,3 +1,4 @@
+import mlflow
 import numpy as np
 import torch
 from collections import defaultdict
@@ -24,7 +25,8 @@ def training(
         scheduler,
         epochs,
         output_dir,
-        device
+        device,
+        log_mlflow=False,
         ):
 
     training_results = defaultdict(list)
@@ -37,9 +39,6 @@ def training(
         train_loss = train_step(model, train_dl, criterion, optimizer, scheduler, device)
         valid_loss = test_step(model, valid_dl, criterion, device)
 
-        train_loss = train_loss / len(train_dl)
-        valid_loss = valid_loss / len(valid_dl)
-
         print(f'Train Loss: {train_loss:.4f} | Val Loss: {valid_loss:.4f}')
         training_results['train_losses'].append(train_loss)
         training_results['valid_losses'].append(valid_loss)
@@ -47,6 +46,10 @@ def training(
             best_loss = valid_loss
             # save best model
             torch.save(model.state_dict(), f"{output_dir}/best_model.pth")
+            print(f"model improved. ${best_loss:.4f} to {valid_loss:.4f}")
+        if log_mlflow:
+            mlflow.log_metric("Training loss", train_loss, step=epoch+1)
+            mlflow.log_metric("Validation loss", valid_loss, step=epoch+1)
         # wandb.log({
         #     "Training loss": train_loss,
         #     "Validation loss": valid_loss,

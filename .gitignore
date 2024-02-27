@@ -6,3 +6,5 @@ __MACOSX
 *.zip
 outputs/*
 scripts/__pycache__
+mlruns/
+*.pth

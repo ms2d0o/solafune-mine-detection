@@ -21,7 +21,7 @@ def train_step(model, dataloader, criterion, optimizer, scheduler, device):
 
         pbar.set_postfix(
             OrderedDict(
-                loss=np.mean(loss.item()),
+                loss=np.mean(train_losses),
             )
         )
         loss.backward()
@@ -41,17 +41,18 @@ def test_step(model, dataloader, criterion, device):
     test_losses = []
 
     pbar = tqdm(enumerate(dataloader), total=len(dataloader), desc="[Test]")
-    for step, (x, y) in pbar:
-        x, y = x.float().to(device), y.to(device)
-        pred = model(x)
-        loss = criterion(pred, y)
-        test_losses.append(loss.item())
+    with torch.no_grad():
+        for step, (x, y) in pbar:
+            x, y = x.float().to(device), y.to(device)
+            pred = model(x).softmax(1)
+            loss = criterion(pred, y)
+            test_losses.append(loss.item())
 
-        pbar.set_postfix(
-            OrderedDict(
-                loss=np.mean(loss.item()),
+            pbar.set_postfix(
+                OrderedDict(
+                    loss=np.mean(test_losses),
+                )
             )
-        )
     test_loss = np.mean(test_losses)
     return test_loss
 
@@ -63,10 +64,11 @@ def inference(model, dataloader, device):
 
     preds = defaultdict(list)
     pbar = tqdm(enumerate(dataloader), total=len(dataloader), desc="[Inference]")
-    for step, (x, y) in pbar:
-        x, y = x.float().to(device), y.to(device)
-        pred = model(x)
-        preds['pred'].append(pred)
-        preds['y'].append(y)
+    with torch.no_grad():
+        for step, (x, y) in pbar:
+            x, y = x.float().to(device), y.to(device)
+            pred = model(x).softmax(1)
+            preds['pred'].append(pred)
+            preds['y'].append(y)
 
     return preds
