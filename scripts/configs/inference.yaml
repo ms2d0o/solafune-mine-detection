@@ -1,0 +1,12 @@
+defaults:
+  - _self_
+
+INPUT_ROOT: data/test
+OUTPUT_ROOT: output
+model_dir: output
+batch_size: 8
+
+experiments:
+  - ID: "001"
+    model: tf_efficientnetv2_s
+    in_chans: 12
