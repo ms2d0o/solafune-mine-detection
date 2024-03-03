@@ -9,7 +9,6 @@ import mlflow
 from transformers import get_cosine_schedule_with_warmup
 
 from dataset import MineDataset
-from steps import train_step, test_step
 from train import training
 from torch.utils.data import DataLoader
 
@@ -40,6 +39,14 @@ def main(cfg: DictConfig):
 
     mlflow.set_experiment(cfg.experiment_name)
     mlflow.set_tracking_uri(cfg.mlflow.tracking_uri)
+
+    if cfg.criterion.params.get('weight') is not None:
+        # listconfig to list
+        weights = cfg.criterion.get('weight')
+        weights = [float(w) for w in weights]
+        weights = torch.tensor(weights).to(device)
+    else:
+        weights = None
 
     with mlflow.start_run() as parent_run:
         parent_id = parent_run.info.run_id
@@ -91,7 +98,8 @@ def main(cfg: DictConfig):
                     torch.nn,
                     # "CrossEntropyLoss"
                     cfg.criterion.name
-                )(**cfg.criterion.params)
+                )(**cfg.criterion.params,
+                 weight=weights)
                 optimizer = getattr(
                     torch.optim,
                     # "AdamW"
