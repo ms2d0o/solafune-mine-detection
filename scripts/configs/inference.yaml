@@ -6,6 +6,8 @@ OUTPUT_ROOT: output
 model_dir: output
 batch_size: 8
 
+device: mps
+
 experiments:
   - ID: "001"
     model: tf_efficientnetv2_s
