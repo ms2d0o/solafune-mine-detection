@@ -21,13 +21,29 @@ def main(cfg: DictConfig):
         names=['filename', 'target'])
     test_ds = MineDataset(cfg.INPUT_ROOT, df_test, transform=[])
     test_dl = DataLoader(test_ds, batch_size=cfg.batch_size, shuffle=False)
+
+    if cfg.device == "mps" and torch.backends.mps.is_built():
+        device = "mps"
+        print("Inferece on MPS")
+    elif cfg.device == "cuda" and torch.cuda.is_available():
+        device = "cuda"
+        print("Inferece on GPU")
+    else:
+        device = "cpu"
+        print("Inferece on CPU")
+
+    prediction = None
     for i, exp in enumerate(cfg.experiments):
-        model_paths = Path(os.path.sep.join([cfg.model_dir,exp.ID])).glob("*.pth")
+        model_paths = Path(os.path.sep.join([cfg.model_dir,exp.ID])).glob("**/*.pth")
         print(f"Experiment: {i+1}/{len(cfg.experiments)}")
-        model = timm.create_model(exp.model, pretrained=False, num_classes=2, in_chans=exp.in_chans).to('cpu')
-        model.load_state_dict(torch.load(sorted(model_paths)[-1], map_location='cpu'))
-        preds = inference(model, test_dl, 'cpu')
-        prediction = torch.cat(preds['pred'], dim=0).numpy()
+        for p in model_paths:
+            model = timm.create_model(exp.model, pretrained=False, num_classes=2, in_chans=exp.in_chans).to(device)
+            model.load_state_dict(torch.load(p, map_location=device))
+            preds = inference(model, test_dl,device)
+            if prediction is None:
+                prediction = torch.cat(preds['pred'], dim=0).cpu().numpy()
+            else:
+                prediction += torch.cat(preds['pred'], dim=0).cpu().numpy()
         predict_labels = prediction.argmax(1)
         df_test['target'] = predict_labels
         # now datetime to str
