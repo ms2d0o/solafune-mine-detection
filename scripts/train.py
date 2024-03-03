@@ -50,12 +50,4 @@ def training(
         if log_mlflow:
             mlflow.log_metric("Training loss", train_loss, step=epoch+1)
             mlflow.log_metric("Validation loss", valid_loss, step=epoch+1)
-        # wandb.log({
-        #     "Training loss": train_loss,
-        #     "Validation loss": valid_loss,
-        #     "Epoch": epoch+1,
-        # })
-        # checkpoint saver
-        # checkpoint_saver(model, epoch, valid_loss)
-    # training_results['path_to_weights'] = checkpoint_saver.top_model_paths[0]['path']
     return training_results
