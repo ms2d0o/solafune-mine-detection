@@ -2,3 +2,7 @@ name: CrossEntropyLoss
 
 params:
   label_smoothing: 0.1
+
+# weight:
+#   - 0.206119
+#   - 0.793881
