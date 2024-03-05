@@ -44,11 +44,11 @@ def main(cfg: DictConfig):
                 prediction = torch.cat(preds['pred'], dim=0).cpu().numpy()
             else:
                 prediction += torch.cat(preds['pred'], dim=0).cpu().numpy()
-        predict_labels = prediction.argmax(1)
-        df_test['target'] = predict_labels
-        # now datetime to str
-        now_str = pd.Timestamp.now().strftime('%Y%m%d%H%M')
-        df_test.to_csv(cfg.OUTPUT_ROOT+f"/submission_{now_str}.csv", index=False, header=False)
+    predict_labels = prediction.argmax(1)
+    df_test['target'] = predict_labels
+    # now datetime to str
+    now_str = pd.Timestamp.now().strftime('%Y%m%d%H%M')
+    df_test.to_csv(cfg.OUTPUT_ROOT+f"/submission_{now_str}.csv", index=False, header=False)
 
 if __name__ == "__main__":
     main()
